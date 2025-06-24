@@ -1,0 +1,296 @@
+{
+  "metadata": {
+    "id": "adaptive_learning_system",
+    "name": "Adaptive Learning & Feedback Loop",
+    "description": "A cognitive model that learns and adapts behavior based on outcome feedback",
+    "version": "1.0.0",
+    "created_at": "2025-06-24T17:46:12Z",
+    "updated_at": "2025-06-24T17:46:12Z",
+    "author": "MiniMax Agent",
+    "tags": ["learning", "adaptation", "feedback", "optimization"],
+    "dependencies": [],
+    "extensions": {
+      "learning_enabled": true,
+      "adaptation_rate": 0.15,
+      "memory_retention": "unlimited"
+    }
+  },
+  "nodes": [
+    {
+      "id": "strategy_selector",
+      "type": "action",
+      "label": "Strategy Selection",
+      "description": "Selects strategy based on current confidence and historical performance",
+      "data": {
+        "value": "conservative",
+        "confidence": 0.7,
+        "weight": 1.0,
+        "parameters": {
+          "available_strategies": ["aggressive", "conservative", "balanced"],
+          "selection_method": "epsilon_greedy",
+          "exploration_rate": 0.1
+        },
+        "state": "active"
+      },
+      "position": {"x": 100, "y": 100},
+      "extensions": {
+        "learning": {
+          "type": "policy_gradient",
+          "update_frequency": "per_episode"
+        }
+      }
+    },
+    {
+      "id": "performance_history",
+      "type": "concept",
+      "label": "Performance Memory Bank",
+      "description": "Stores historical performance data for each strategy",
+      "data": {
+        "value": {
+          "aggressive": {"attempts": 15, "successes": 8, "avg_score": 0.72},
+          "conservative": {"attempts": 22, "successes": 18, "avg_score": 0.81},
+          "balanced": {"attempts": 10, "successes": 7, "avg_score": 0.75}
+        },
+        "confidence": 0.95,
+        "weight": 0.9,
+        "parameters": {
+          "max_history_length": 1000,
+          "decay_factor": 0.98,
+          "confidence_threshold": 0.8
+        },
+        "state": "active"
+      },
+      "position": {"x": 300, "y": 50},
+      "extensions": {
+        "persistence": {
+          "type": "rolling_window",
+          "backup_frequency": "daily"
+        }
+      }
+    },
+    {
+      "id": "action_executor",
+      "type": "action",
+      "label": "Execute Selected Strategy",
+      "description": "Performs the action based on selected strategy",
+      "data": {
+        "value": null,
+        "confidence": 0.8,
+        "weight": 1.0,
+        "parameters": {
+          "execution_timeout": 5000,
+          "retry_attempts": 3,
+          "fallback_strategy": "conservative"
+        },
+        "state": "pending"
+      },
+      "position": {"x": 300, "y": 150}
+    },
+    {
+      "id": "outcome_evaluator",
+      "type": "formula",
+      "label": "Outcome Quality Assessment",
+      "description": "Evaluates the quality and success of executed actions",
+      "data": {
+        "value": "success_rate * 0.6 + efficiency_score * 0.4",
+        "confidence": 0.9,
+        "weight": 1.0,
+        "parameters": {
+          "formula_type": "composite_score",
+          "variables": ["success_rate", "efficiency_score", "resource_usage"],
+          "normalization": "min_max",
+          "output_range": [0, 1]
+        },
+        "state": "active"
+      },
+      "position": {"x": 500, "y": 150},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["math.min", "math.max", "math.avg"],
+          "variable_validation": true
+        }
+      }
+    },
+    {
+      "id": "feedback_processor",
+      "type": "action",
+      "label": "Process Feedback & Update",
+      "description": "Processes outcome feedback and updates strategy preferences",
+      "data": {
+        "value": null,
+        "confidence": 0.85,
+        "weight": 0.95,
+        "parameters": {
+          "learning_rate": 0.15,
+          "momentum": 0.05,
+          "update_method": "temporal_difference"
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 500, "y": 250}
+    },
+    {
+      "id": "confidence_adjuster",
+      "type": "action",
+      "label": "Adjust Strategy Confidence",
+      "description": "Updates confidence scores based on recent performance",
+      "data": {
+        "value": {},
+        "confidence": 0.9,
+        "weight": 0.8,
+        "parameters": {
+          "adjustment_sensitivity": 0.2,
+          "confidence_bounds": [0.1, 0.99],
+          "smoothing_factor": 0.1
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 700, "y": 200}
+    },
+    {
+      "id": "exploration_trigger",
+      "type": "condition",
+      "label": "Exploration vs Exploitation",
+      "description": "Decides when to explore new strategies vs exploit known good ones",
+      "data": {
+        "value": false,
+        "confidence": 0.8,
+        "weight": 0.7,
+        "parameters": {
+          "exploration_threshold": 0.15,
+          "performance_stagnation_limit": 10,
+          "confidence_minimum": 0.6
+        },
+        "state": "active"
+      },
+      "position": {"x": 100, "y": 250},
+      "extensions": {
+        "temporal": {
+          "type": "periodic_check",
+          "interval_ms": 30000
+        }
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "history_influences_selection",
+      "type": "influences",
+      "source": "performance_history",
+      "target": "strategy_selector",
+      "label": "Performance history influences strategy selection",
+      "strength": 0.85,
+      "conditions": [
+        {
+          "field": "data.confidence",
+          "operator": "gte",
+          "value": 0.7
+        }
+      ]
+    },
+    {
+      "id": "selection_triggers_execution",
+      "type": "triggers",
+      "source": "strategy_selector",
+      "target": "action_executor",
+      "label": "Strategy selection triggers action execution",
+      "strength": 1.0
+    },
+    {
+      "id": "execution_feeds_evaluation",
+      "type": "causes",
+      "source": "action_executor",
+      "target": "outcome_evaluator",
+      "label": "Action execution provides data for outcome evaluation",
+      "strength": 0.95,
+      "conditions": [
+        {
+          "field": "state",
+          "operator": "eq",
+          "value": "completed"
+        }
+      ]
+    },
+    {
+      "id": "evaluation_triggers_feedback",
+      "type": "triggers",
+      "source": "outcome_evaluator",
+      "target": "feedback_processor",
+      "label": "Outcome evaluation triggers feedback processing",
+      "strength": 0.9
+    },
+    {
+      "id": "feedback_updates_history",
+      "type": "causes",
+      "source": "feedback_processor",
+      "target": "performance_history",
+      "label": "Feedback processing updates performance history",
+      "strength": 0.95,
+      "bidirectional": false
+    },
+    {
+      "id": "feedback_adjusts_confidence",
+      "type": "causes",
+      "source": "feedback_processor",
+      "target": "confidence_adjuster",
+      "label": "Feedback processing triggers confidence adjustment",
+      "strength": 0.8
+    },
+    {
+      "id": "confidence_influences_selection",
+      "type": "influences",
+      "source": "confidence_adjuster",
+      "target": "strategy_selector",
+      "label": "Confidence adjustment influences future strategy selection",
+      "strength": 0.7
+    },
+    {
+      "id": "exploration_modifies_selection",
+      "type": "influences",
+      "source": "exploration_trigger",
+      "target": "strategy_selector",
+      "label": "Exploration trigger modifies selection behavior",
+      "strength": 0.6,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "history_feeds_exploration",
+      "type": "influences",
+      "source": "performance_history",
+      "target": "exploration_trigger",
+      "label": "Performance history influences exploration decisions",
+      "strength": 0.5
+    }
+  ],
+  "execution": {
+    "entry_points": ["strategy_selector"],
+    "exit_points": ["action_executor"],
+    "max_iterations": 200,
+    "timeout": 15000,
+    "mode": "adaptive"
+  },
+  "extensions": {
+    "learning": {
+      "enabled": true,
+      "algorithm": "reinforcement_learning",
+      "discount_factor": 0.95,
+      "experience_replay": true
+    },
+    "persistence": {
+      "auto_save": true,
+      "checkpoint_frequency": 50,
+      "backup_retention": 10
+    },
+    "monitoring": {
+      "performance_tracking": true,
+      "convergence_detection": true,
+      "anomaly_detection": true
+    }
+  }
+}

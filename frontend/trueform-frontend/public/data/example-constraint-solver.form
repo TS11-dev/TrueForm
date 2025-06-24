@@ -1,0 +1,426 @@
+{
+  "metadata": {
+    "id": "resource_allocation_constraints",
+    "name": "Multi-Path Resource Allocation with Constraints",
+    "description": "Complex branching logic for resource allocation with multiple constraints and optimization paths",
+    "version": "1.0.0",
+    "created_at": "2025-06-24T17:46:12Z",
+    "updated_at": "2025-06-24T17:46:12Z",
+    "author": "MiniMax Agent",
+    "tags": ["constraints", "optimization", "branching", "resource-allocation"],
+    "dependencies": [],
+    "extensions": {
+      "solver_type": "constraint_satisfaction",
+      "optimization_goal": "maximize_efficiency"
+    }
+  },
+  "nodes": [
+    {
+      "id": "resource_pool",
+      "type": "concept",
+      "label": "Available Resources",
+      "description": "Current pool of available computational and human resources",
+      "data": {
+        "value": {
+          "cpu_cores": 16,
+          "memory_gb": 64,
+          "gpu_units": 2,
+          "human_hours": 40,
+          "budget_usd": 5000
+        },
+        "confidence": 0.95,
+        "weight": 1.0,
+        "parameters": {
+          "refresh_rate": "hourly",
+          "reservation_buffer": 0.1
+        },
+        "state": "active"
+      },
+      "position": {"x": 100, "y": 100}
+    },
+    {
+      "id": "high_priority_request",
+      "type": "event",
+      "label": "High Priority Task Request",
+      "description": "Incoming request requiring immediate resource allocation",
+      "data": {
+        "value": {
+          "task_id": "urgent_001",
+          "cpu_required": 8,
+          "memory_required": 32,
+          "deadline_hours": 4,
+          "max_budget": 2000
+        },
+        "confidence": 1.0,
+        "weight": 1.0,
+        "parameters": {
+          "priority_level": "critical",
+          "preemption_allowed": true
+        },
+        "state": "pending"
+      },
+      "position": {"x": 100, "y": 200}
+    },
+    {
+      "id": "resource_check_cpu",
+      "type": "condition",
+      "label": "CPU Availability Check",
+      "description": "Validates if sufficient CPU resources are available",
+      "data": {
+        "value": false,
+        "confidence": 0.9,
+        "weight": 0.9,
+        "parameters": {
+          "safety_margin": 0.1,
+          "include_reserved": false
+        },
+        "state": "pending"
+      },
+      "position": {"x": 300, "y": 150}
+    },
+    {
+      "id": "resource_check_memory",
+      "type": "condition",
+      "label": "Memory Availability Check", 
+      "description": "Validates if sufficient memory resources are available",
+      "data": {
+        "value": false,
+        "confidence": 0.9,
+        "weight": 0.9,
+        "parameters": {
+          "safety_margin": 0.15,
+          "include_cache": true
+        },
+        "state": "pending"
+      },
+      "position": {"x": 300, "y": 250}
+    },
+    {
+      "id": "budget_constraint",
+      "type": "condition",
+      "label": "Budget Constraint Check",
+      "description": "Ensures allocation stays within budget limits",
+      "data": {
+        "value": false,
+        "confidence": 0.95,
+        "weight": 1.0,
+        "parameters": {
+          "cost_model": "time_based",
+          "overhead_factor": 1.2
+        },
+        "state": "pending"
+      },
+      "position": {"x": 300, "y": 350}
+    },
+    {
+      "id": "optimal_allocation",
+      "type": "action",
+      "label": "Optimal Resource Allocation",
+      "description": "Allocates resources using optimal strategy when all constraints satisfied",
+      "data": {
+        "value": null,
+        "confidence": 0.85,
+        "weight": 1.0,
+        "parameters": {
+          "allocation_strategy": "greedy_optimal",
+          "load_balancing": true,
+          "efficiency_target": 0.95
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 500, "y": 100}
+    },
+    {
+      "id": "degraded_allocation",
+      "type": "action",
+      "label": "Degraded Mode Allocation",
+      "description": "Alternative allocation when some constraints cannot be met",
+      "data": {
+        "value": null,
+        "confidence": 0.7,
+        "weight": 0.8,
+        "parameters": {
+          "allocation_strategy": "best_effort",
+          "quality_reduction": 0.3,
+          "time_extension": 1.5
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 500, "y": 200}
+    },
+    {
+      "id": "queue_request",
+      "type": "action",
+      "label": "Queue for Later Processing",
+      "description": "Queues request when immediate allocation impossible",
+      "data": {
+        "value": null,
+        "confidence": 0.9,
+        "weight": 0.6,
+        "parameters": {
+          "queue_priority": "high",
+          "estimated_wait": 120,
+          "notification_enabled": true
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 500, "y": 300}
+    },
+    {
+      "id": "constraint_optimizer",
+      "type": "formula",
+      "label": "Constraint Satisfaction Optimizer",
+      "description": "Calculates optimal allocation given constraint satisfaction levels",
+      "data": {
+        "value": "cpu_satisfaction * 0.4 + memory_satisfaction * 0.3 + budget_satisfaction * 0.3",
+        "confidence": 0.9,
+        "weight": 1.0,
+        "parameters": {
+          "optimization_method": "weighted_sum",
+          "constraint_weights": {"cpu": 0.4, "memory": 0.3, "budget": 0.3},
+          "satisfaction_threshold": 0.8
+        },
+        "state": "active"
+      },
+      "position": {"x": 700, "y": 150},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["math.min", "math.max", "math.sqrt"],
+          "timeout_ms": 1000
+        }
+      }
+    },
+    {
+      "id": "allocation_monitor",
+      "type": "event",
+      "label": "Allocation Success Monitor",
+      "description": "Monitors allocation success and triggers optimization updates",
+      "data": {
+        "value": {
+          "success_rate": 0.0,
+          "efficiency_score": 0.0,
+          "constraint_violations": 0
+        },
+        "confidence": 1.0,
+        "weight": 0.8,
+        "parameters": {
+          "monitoring_window": 3600,
+          "alert_threshold": 0.7
+        },
+        "state": "active"
+      },
+      "position": {"x": 700, "y": 300}
+    },
+    {
+      "id": "preemption_evaluator",
+      "type": "condition",
+      "label": "Preemption Feasibility Check",
+      "description": "Evaluates if lower priority tasks can be preempted",
+      "data": {
+        "value": false,
+        "confidence": 0.8,
+        "weight": 0.7,
+        "parameters": {
+          "preemption_cost": 0.2,
+          "priority_threshold": 3,
+          "rollback_complexity": "medium"
+        },
+        "state": "pending"
+      },
+      "position": {"x": 300, "y": 450}
+    }
+  ],
+  "relations": [
+    {
+      "id": "request_triggers_cpu_check",
+      "type": "triggers",
+      "source": "high_priority_request",
+      "target": "resource_check_cpu",
+      "label": "High priority request triggers CPU availability check",
+      "strength": 1.0
+    },
+    {
+      "id": "request_triggers_memory_check", 
+      "type": "triggers",
+      "source": "high_priority_request",
+      "target": "resource_check_memory",
+      "label": "High priority request triggers memory availability check",
+      "strength": 1.0
+    },
+    {
+      "id": "request_triggers_budget_check",
+      "type": "triggers",
+      "source": "high_priority_request",
+      "target": "budget_constraint",
+      "label": "High priority request triggers budget constraint check",
+      "strength": 1.0
+    },
+    {
+      "id": "pool_influences_cpu_check",
+      "type": "influences",
+      "source": "resource_pool",
+      "target": "resource_check_cpu",
+      "label": "Resource pool state influences CPU availability check",
+      "strength": 0.95
+    },
+    {
+      "id": "pool_influences_memory_check",
+      "type": "influences",
+      "source": "resource_pool",
+      "target": "resource_check_memory",
+      "label": "Resource pool state influences memory availability check",
+      "strength": 0.95
+    },
+    {
+      "id": "pool_influences_budget_check",
+      "type": "influences",
+      "source": "resource_pool",
+      "target": "budget_constraint",
+      "label": "Resource pool state influences budget constraint check",
+      "strength": 0.9
+    },
+    {
+      "id": "all_constraints_enable_optimal",
+      "type": "causes",
+      "source": "constraint_optimizer",
+      "target": "optimal_allocation",
+      "label": "All constraints satisfied enables optimal allocation",
+      "strength": 0.9,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "gte",
+          "value": 0.8
+        }
+      ]
+    },
+    {
+      "id": "partial_constraints_enable_degraded",
+      "type": "causes",
+      "source": "constraint_optimizer", 
+      "target": "degraded_allocation",
+      "label": "Partial constraint satisfaction enables degraded allocation",
+      "strength": 0.7,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "gte",
+          "value": 0.5
+        },
+        {
+          "field": "data.value",
+          "operator": "lt",
+          "value": 0.8
+        }
+      ]
+    },
+    {
+      "id": "no_constraints_force_queue",
+      "type": "causes",
+      "source": "constraint_optimizer",
+      "target": "queue_request",
+      "label": "Insufficient constraint satisfaction forces queueing",
+      "strength": 0.95,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "lt",
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "id": "cpu_feeds_optimizer",
+      "type": "influences",
+      "source": "resource_check_cpu",
+      "target": "constraint_optimizer",
+      "label": "CPU check result influences optimization calculation",
+      "strength": 0.4
+    },
+    {
+      "id": "memory_feeds_optimizer",
+      "type": "influences",
+      "source": "resource_check_memory",
+      "target": "constraint_optimizer",
+      "label": "Memory check result influences optimization calculation",
+      "strength": 0.3
+    },
+    {
+      "id": "budget_feeds_optimizer",
+      "type": "influences",
+      "source": "budget_constraint",
+      "target": "constraint_optimizer",
+      "label": "Budget constraint influences optimization calculation",
+      "strength": 0.3
+    },
+    {
+      "id": "allocation_monitored",
+      "type": "triggers",
+      "source": "optimal_allocation",
+      "target": "allocation_monitor",
+      "label": "Optimal allocation triggers monitoring",
+      "strength": 0.8
+    },
+    {
+      "id": "degraded_monitored",
+      "type": "triggers",
+      "source": "degraded_allocation", 
+      "target": "allocation_monitor",
+      "label": "Degraded allocation triggers monitoring",
+      "strength": 0.8
+    },
+    {
+      "id": "insufficient_resources_check_preemption",
+      "type": "triggers",
+      "source": "resource_check_cpu",
+      "target": "preemption_evaluator",
+      "label": "Insufficient CPU resources triggers preemption evaluation",
+      "strength": 0.6,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "eq",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": "preemption_enables_degraded",
+      "type": "influences",
+      "source": "preemption_evaluator",
+      "target": "degraded_allocation",
+      "label": "Successful preemption evaluation enables degraded allocation",
+      "strength": 0.5,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "eq",
+          "value": true
+        }
+      ]
+    }
+  ],
+  "execution": {
+    "entry_points": ["high_priority_request"],
+    "exit_points": ["optimal_allocation", "degraded_allocation", "queue_request"],
+    "max_iterations": 150,
+    "timeout": 10000,
+    "mode": "parallel"
+  },
+  "extensions": {
+    "constraint_solving": {
+      "algorithm": "branch_and_bound",
+      "backtracking_enabled": true,
+      "heuristic": "most_constrained_variable"
+    },
+    "optimization": {
+      "objective": "maximize_satisfaction",
+      "tolerance": 0.05,
+      "max_evaluations": 1000
+    },
+    "monitoring": {
+      "real_time_updates": true,
+      "performance_metrics": ["throughput", "satisfaction_rate", "resource_utilization"]
+    }
+  }
+}

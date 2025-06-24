@@ -1,0 +1,281 @@
+{
+  "metadata": {
+    "id": "multi_agent_problem_solving",
+    "name": "Multi-Agent Collaborative Problem Solving",
+    "description": "A cognitive model for coordinating multiple AI agents to solve complex problems",
+    "version": "1.0.0",
+    "created_at": "2025-06-24T17:46:12Z",
+    "updated_at": "2025-06-24T17:46:12Z",
+    "author": "MiniMax Agent",
+    "tags": ["multi-agent", "collaboration", "problem-solving"],
+    "dependencies": [],
+    "extensions": {
+      "agent_coordination": true,
+      "parallel_execution": true
+    }
+  },
+  "nodes": [
+    {
+      "id": "problem_definition",
+      "type": "concept",
+      "label": "Problem Definition",
+      "description": "Clear definition of the problem to be solved",
+      "data": {
+        "value": null,
+        "confidence": 1.0,
+        "weight": 1.0,
+        "parameters": {
+          "complexity_level": "high",
+          "domain": "general",
+          "decomposable": true
+        },
+        "state": "pending"
+      },
+      "position": {"x": 100, "y": 100}
+    },
+    {
+      "id": "task_decomposition",
+      "type": "action",
+      "label": "Decompose Into Subtasks",
+      "description": "Break down complex problem into manageable subtasks",
+      "data": {
+        "value": [],
+        "confidence": 0.8,
+        "weight": 0.9,
+        "parameters": {
+          "max_subtasks": 5,
+          "min_complexity_reduction": 0.3,
+          "parallel_eligible": true
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 300, "y": 100}
+    },
+    {
+      "id": "agent_assignment",
+      "type": "action",
+      "label": "Assign Agents to Tasks",
+      "description": "Match available agents to subtasks based on capabilities",
+      "data": {
+        "value": {},
+        "confidence": 0.85,
+        "weight": 0.95,
+        "parameters": {
+          "matching_algorithm": "capability_based",
+          "load_balancing": true,
+          "fallback_strategy": "redistribution"
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 500, "y": 100}
+    },
+    {
+      "id": "researcher_agent",
+      "type": "concept",
+      "label": "Research Agent",
+      "description": "Specialized agent for information gathering and analysis",
+      "data": {
+        "value": {
+          "agent_id": "research_001",
+          "capabilities": ["web_search", "data_analysis", "report_generation"],
+          "current_load": 0.3,
+          "performance_score": 0.92
+        },
+        "confidence": 0.9,
+        "weight": 0.8,
+        "state": "active"
+      },
+      "position": {"x": 700, "y": 50}
+    },
+    {
+      "id": "dev_agent",
+      "type": "concept",
+      "label": "Development Agent",
+      "description": "Specialized agent for code development and technical implementation",
+      "data": {
+        "value": {
+          "agent_id": "dev_001",
+          "capabilities": ["coding", "testing", "deployment", "debugging"],
+          "current_load": 0.1,
+          "performance_score": 0.88
+        },
+        "confidence": 0.9,
+        "weight": 0.8,
+        "state": "active"
+      },
+      "position": {"x": 700, "y": 150}
+    },
+    {
+      "id": "coordination_hub",
+      "type": "action",
+      "label": "Coordinate Agent Communication",
+      "description": "Manages communication and dependency resolution between agents",
+      "data": {
+        "value": {
+          "active_channels": [],
+          "message_queue": [],
+          "dependency_graph": {}
+        },
+        "confidence": 0.95,
+        "weight": 1.0,
+        "parameters": {
+          "communication_protocol": "message_passing",
+          "conflict_resolution": "priority_based",
+          "synchronization_points": []
+        },
+        "state": "active"
+      },
+      "position": {"x": 500, "y": 250}
+    },
+    {
+      "id": "progress_monitor",
+      "type": "event",
+      "label": "Progress Monitoring",
+      "description": "Tracks completion status and quality of subtasks",
+      "data": {
+        "value": {
+          "completed_tasks": 0,
+          "total_tasks": 0,
+          "quality_scores": [],
+          "blockers": []
+        },
+        "confidence": 1.0,
+        "weight": 0.9,
+        "parameters": {
+          "monitoring_interval": 30,
+          "quality_threshold": 0.8,
+          "escalation_triggers": ["timeout", "quality_failure", "resource_unavailable"]
+        },
+        "state": "active"
+      },
+      "position": {"x": 300, "y": 300}
+    },
+    {
+      "id": "solution_synthesis",
+      "type": "action",
+      "label": "Synthesize Final Solution",
+      "description": "Combines agent outputs into coherent final solution",
+      "data": {
+        "value": null,
+        "confidence": 0.7,
+        "weight": 1.0,
+        "parameters": {
+          "synthesis_method": "weighted_integration",
+          "quality_validation": true,
+          "consistency_check": true
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 700, "y": 300}
+    }
+  ],
+  "relations": [
+    {
+      "id": "problem_triggers_decomposition",
+      "type": "triggers",
+      "source": "problem_definition",
+      "target": "task_decomposition",
+      "label": "Problem definition triggers task decomposition",
+      "strength": 1.0,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "neq",
+          "value": null
+        }
+      ]
+    },
+    {
+      "id": "decomposition_enables_assignment",
+      "type": "causes",
+      "source": "task_decomposition",
+      "target": "agent_assignment",
+      "label": "Task decomposition enables agent assignment",
+      "strength": 0.95
+    },
+    {
+      "id": "assignment_activates_coordination",
+      "type": "triggers",
+      "source": "agent_assignment",
+      "target": "coordination_hub",
+      "label": "Agent assignment activates coordination hub",
+      "strength": 0.9
+    },
+    {
+      "id": "researcher_available_for_assignment",
+      "type": "influences",
+      "source": "researcher_agent",
+      "target": "agent_assignment",
+      "label": "Research agent availability influences assignment",
+      "strength": 0.8
+    },
+    {
+      "id": "dev_available_for_assignment",
+      "type": "influences",
+      "source": "dev_agent",
+      "target": "agent_assignment",
+      "label": "Development agent availability influences assignment",
+      "strength": 0.8
+    },
+    {
+      "id": "coordination_enables_monitoring",
+      "type": "triggers",
+      "source": "coordination_hub",
+      "target": "progress_monitor",
+      "label": "Coordination hub enables progress monitoring",
+      "strength": 0.85
+    },
+    {
+      "id": "monitoring_triggers_synthesis",
+      "type": "triggers",
+      "source": "progress_monitor",
+      "target": "solution_synthesis",
+      "label": "Progress monitoring triggers solution synthesis when ready",
+      "strength": 0.9,
+      "conditions": [
+        {
+          "field": "data.value.completed_tasks",
+          "operator": "eq",
+          "value": "data.value.total_tasks"
+        }
+      ]
+    },
+    {
+      "id": "coordination_manages_researchers",
+      "type": "contains",
+      "source": "coordination_hub",
+      "target": "researcher_agent",
+      "label": "Coordination hub manages research agent",
+      "strength": 0.7,
+      "bidirectional": true
+    },
+    {
+      "id": "coordination_manages_dev",
+      "type": "contains",
+      "source": "coordination_hub",
+      "target": "dev_agent",
+      "label": "Coordination hub manages development agent",
+      "strength": 0.7,
+      "bidirectional": true
+    }
+  ],
+  "execution": {
+    "entry_points": ["problem_definition"],
+    "exit_points": ["solution_synthesis"],
+    "max_iterations": 500,
+    "timeout": 30000,
+    "mode": "parallel"
+  },
+  "extensions": {
+    "agent_coordination": {
+      "communication_protocol": "async_message_passing",
+      "load_balancing": true,
+      "fault_tolerance": "agent_redundancy"
+    },
+    "learning": {
+      "enabled": true,
+      "performance_tracking": true,
+      "capability_evolution": true
+    }
+  }
+}

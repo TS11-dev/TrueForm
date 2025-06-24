@@ -1,0 +1,488 @@
+{
+  "metadata": {
+    "id": "hierarchical_task_management",
+    "name": "Hierarchical Task Management with Shared Resources",
+    "description": "Multi-level task decomposition with shared knowledge nodes and cross-module dependencies",
+    "version": "1.0.0", 
+    "created_at": "2025-06-24T17:46:12Z",
+    "updated_at": "2025-06-24T17:46:12Z",
+    "author": "MiniMax Agent",
+    "tags": ["hierarchy", "composition", "shared-nodes", "modularity"],
+    "dependencies": [
+      {
+        "id": "user_preferences_module",
+        "version": "1.2.0"
+      },
+      {
+        "id": "resource_management_core",
+        "version": "2.1.0"
+      }
+    ],
+    "extensions": {
+      "modularity": "hierarchical",
+      "shared_state": true,
+      "cross_module_communication": true
+    }
+  },
+  "nodes": [
+    {
+      "id": "global_context",
+      "type": "concept",
+      "label": "Global System Context",
+      "description": "Shared context accessible across all task hierarchies",
+      "data": {
+        "value": {
+          "current_user": "user_123",
+          "session_id": "sess_456", 
+          "system_load": 0.3,
+          "priority_mode": "balanced"
+        },
+        "confidence": 1.0,
+        "weight": 1.0,
+        "parameters": {
+          "scope": "global",
+          "persistence": "session",
+          "sync_frequency": "real_time"
+        },
+        "state": "active"
+      },
+      "position": {"x": 400, "y": 50},
+      "extensions": {
+        "shared": {
+          "access_level": "read_write",
+          "modules": ["planning", "execution", "monitoring"],
+          "sync_strategy": "event_driven"
+        }
+      }
+    },
+    {
+      "id": "planning_module",
+      "type": "concept",
+      "label": "High-Level Planning Module",
+      "description": "Top-level planning and task decomposition module",
+      "data": {
+        "value": {
+          "active_plans": [],
+          "planning_horizon": "7_days",
+          "optimization_target": "efficiency"
+        },
+        "confidence": 0.85,
+        "weight": 0.9,
+        "state": "active"
+      },
+      "position": {"x": 200, "y": 150},
+      "extensions": {
+        "module": {
+          "type": "composite",
+          "contained_nodes": ["goal_analyzer", "task_decomposer", "priority_manager"],
+          "interface_nodes": ["planning_input", "planning_output"]
+        }
+      }
+    },
+    {
+      "id": "goal_analyzer",
+      "type": "action",
+      "label": "Goal Analysis & Decomposition",
+      "description": "Analyzes high-level goals and breaks them into actionable objectives",
+      "data": {
+        "value": null,
+        "confidence": 0.8,
+        "weight": 0.9,
+        "parameters": {
+          "decomposition_strategy": "breadth_first",
+          "max_depth": 3,
+          "min_granularity": "1_hour"
+        },
+        "state": "active"
+      },
+      "position": {"x": 150, "y": 250},
+      "extensions": {
+        "parent_module": "planning_module",
+        "shared_dependencies": ["global_context", "knowledge_base"]
+      }
+    },
+    {
+      "id": "task_decomposer",
+      "type": "action",
+      "label": "Task Decomposition Engine", 
+      "description": "Breaks down complex tasks into manageable sub-tasks",
+      "data": {
+        "value": null,
+        "confidence": 0.85,
+        "weight": 0.9,
+        "parameters": {
+          "decomposition_rules": ["time_based", "resource_based", "dependency_based"],
+          "parallel_factor": 0.7,
+          "complexity_threshold": 0.3
+        },
+        "state": "active"
+      },
+      "position": {"x": 250, "y": 250},
+      "extensions": {
+        "parent_module": "planning_module",
+        "shared_dependencies": ["global_context", "resource_tracker"]
+      }
+    },
+    {
+      "id": "execution_module",
+      "type": "concept",
+      "label": "Task Execution Module",
+      "description": "Handles actual task execution and progress tracking",
+      "data": {
+        "value": {
+          "active_tasks": [],
+          "execution_mode": "parallel",
+          "success_rate": 0.92
+        },
+        "confidence": 0.9,
+        "weight": 1.0,
+        "state": "active"
+      },
+      "position": {"x": 600, "y": 150},
+      "extensions": {
+        "module": {
+          "type": "composite",
+          "contained_nodes": ["task_executor", "progress_tracker", "error_handler"],
+          "interface_nodes": ["execution_input", "execution_output"]
+        }
+      }
+    },
+    {
+      "id": "task_executor",
+      "type": "action",
+      "label": "Task Execution Engine",
+      "description": "Executes individual tasks with resource management",
+      "data": {
+        "value": null,
+        "confidence": 0.85,
+        "weight": 1.0,
+        "parameters": {
+          "concurrent_limit": 5,
+          "timeout_strategy": "adaptive",
+          "retry_policy": "exponential_backoff"
+        },
+        "state": "active"
+      },
+      "position": {"x": 550, "y": 250},
+      "extensions": {
+        "parent_module": "execution_module",
+        "shared_dependencies": ["global_context", "resource_tracker", "knowledge_base"]
+      }
+    },
+    {
+      "id": "progress_tracker",
+      "type": "event",
+      "label": "Progress Monitoring System",
+      "description": "Tracks progress across all active tasks and modules",
+      "data": {
+        "value": {
+          "completed_tasks": 0,
+          "total_tasks": 0,
+          "progress_percentage": 0.0,
+          "estimated_completion": null
+        },
+        "confidence": 0.95,
+        "weight": 0.8,
+        "parameters": {
+          "update_frequency": 10,
+          "progress_calculation": "weighted_completion"
+        },
+        "state": "active"
+      },
+      "position": {"x": 650, "y": 250},
+      "extensions": {
+        "parent_module": "execution_module",
+        "shared_dependencies": ["global_context"],
+        "cross_module_visibility": ["planning_module", "monitoring_module"]
+      }
+    },
+    {
+      "id": "knowledge_base",
+      "type": "concept",
+      "label": "Shared Knowledge Repository",
+      "description": "Central knowledge base shared across all modules",
+      "data": {
+        "value": {
+          "learned_patterns": {},
+          "best_practices": {},
+          "failure_modes": {},
+          "optimization_hints": {}
+        },
+        "confidence": 0.9,
+        "weight": 0.85,
+        "parameters": {
+          "knowledge_retention": "permanent",
+          "update_strategy": "incremental",
+          "sharing_policy": "open"
+        },
+        "state": "active"
+      },
+      "position": {"x": 400, "y": 350},
+      "extensions": {
+        "shared": {
+          "access_level": "read_write",
+          "modules": ["planning", "execution", "monitoring", "learning"],
+          "consistency_guarantee": "eventual"
+        }
+      }
+    },
+    {
+      "id": "resource_tracker",
+      "type": "concept",
+      "label": "Shared Resource Tracker",
+      "description": "Tracks resource usage across all modules and tasks",
+      "data": {
+        "value": {
+          "cpu_usage": 0.3,
+          "memory_usage": 0.4,
+          "network_usage": 0.1,
+          "available_workers": 8
+        },
+        "confidence": 0.95,
+        "weight": 0.9,
+        "parameters": {
+          "monitoring_granularity": "per_second",
+          "resource_limits": {"cpu": 0.8, "memory": 0.85},
+          "alert_thresholds": {"cpu": 0.9, "memory": 0.9}
+        },
+        "state": "active"
+      },
+      "position": {"x": 200, "y": 350},
+      "extensions": {
+        "shared": {
+          "access_level": "read_write",
+          "modules": ["planning", "execution"],
+          "real_time_sync": true
+        }
+      }
+    },
+    {
+      "id": "inter_module_coordinator",
+      "type": "action",
+      "label": "Inter-Module Coordination Hub",
+      "description": "Coordinates communication and dependencies between modules",
+      "data": {
+        "value": {
+          "active_channels": [],
+          "message_queue": [],
+          "coordination_rules": {}
+        },
+        "confidence": 0.9,
+        "weight": 1.0,
+        "parameters": {
+          "coordination_strategy": "event_driven",
+          "conflict_resolution": "priority_based",
+          "load_balancing": true
+        },
+        "state": "active"
+      },
+      "position": {"x": 400, "y": 450},
+      "extensions": {
+        "coordination": {
+          "managed_modules": ["planning_module", "execution_module"],
+          "communication_protocols": ["event_bus", "direct_call", "message_queue"]
+        }
+      }
+    },
+    {
+      "id": "adaptive_scheduler",
+      "type": "formula",
+      "label": "Adaptive Task Scheduling",
+      "description": "Dynamic scheduling based on system state and resource availability",
+      "data": {
+        "value": "priority_score * 0.4 + resource_efficiency * 0.3 + deadline_urgency * 0.3",
+        "confidence": 0.85,
+        "weight": 0.9,
+        "parameters": {
+          "scheduling_algorithm": "weighted_round_robin",
+          "adaptation_rate": 0.1,
+          "load_balancing_factor": 0.2
+        },
+        "state": "active"
+      },
+      "position": {"x": 600, "y": 350},
+      "extensions": {
+        "shared_dependencies": ["global_context", "resource_tracker"],
+        "sandbox": {
+          "allowed_functions": ["math.min", "math.max", "math.weighted_avg"],
+          "variable_sources": ["resource_tracker", "progress_tracker"]
+        }
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "global_context_feeds_planning",
+      "type": "influences",
+      "source": "global_context",
+      "target": "planning_module",
+      "label": "Global context influences planning decisions",
+      "strength": 0.8,
+      "bidirectional": false
+    },
+    {
+      "id": "global_context_feeds_execution",
+      "type": "influences",
+      "source": "global_context",
+      "target": "execution_module",
+      "label": "Global context influences execution behavior",
+      "strength": 0.8,
+      "bidirectional": false
+    },
+    {
+      "id": "planning_contains_goal_analyzer",
+      "type": "contains",
+      "source": "planning_module",
+      "target": "goal_analyzer",
+      "label": "Planning module contains goal analyzer",
+      "strength": 1.0,
+      "bidirectional": true
+    },
+    {
+      "id": "planning_contains_task_decomposer",
+      "type": "contains",
+      "source": "planning_module",
+      "target": "task_decomposer",
+      "label": "Planning module contains task decomposer",
+      "strength": 1.0,
+      "bidirectional": true
+    },
+    {
+      "id": "execution_contains_task_executor",
+      "type": "contains",
+      "source": "execution_module",
+      "target": "task_executor",
+      "label": "Execution module contains task executor",
+      "strength": 1.0,
+      "bidirectional": true
+    },
+    {
+      "id": "execution_contains_progress_tracker",
+      "type": "contains",
+      "source": "execution_module",
+      "target": "progress_tracker",
+      "label": "Execution module contains progress tracker",
+      "strength": 1.0,
+      "bidirectional": true
+    },
+    {
+      "id": "planning_triggers_execution",
+      "type": "triggers",
+      "source": "planning_module",
+      "target": "execution_module",
+      "label": "Planning completion triggers execution",
+      "strength": 0.9,
+      "conditions": [
+        {
+          "field": "data.value.active_plans",
+          "operator": "neq",
+          "value": []
+        }
+      ]
+    },
+    {
+      "id": "knowledge_base_shared_planning",
+      "type": "influences",
+      "source": "knowledge_base",
+      "target": "goal_analyzer",
+      "label": "Knowledge base influences goal analysis",
+      "strength": 0.7,
+      "bidirectional": true
+    },
+    {
+      "id": "knowledge_base_shared_execution",
+      "type": "influences",
+      "source": "knowledge_base",
+      "target": "task_executor",
+      "label": "Knowledge base influences task execution",
+      "strength": 0.7,
+      "bidirectional": true
+    },
+    {
+      "id": "resource_tracker_shared_planning",
+      "type": "influences",
+      "source": "resource_tracker",
+      "target": "task_decomposer",
+      "label": "Resource tracker influences task decomposition",
+      "strength": 0.8
+    },
+    {
+      "id": "resource_tracker_shared_execution",
+      "type": "influences",
+      "source": "resource_tracker",
+      "target": "task_executor",
+      "label": "Resource tracker influences task execution",
+      "strength": 0.9
+    },
+    {
+      "id": "coordinator_manages_planning",
+      "type": "influences",
+      "source": "inter_module_coordinator",
+      "target": "planning_module",
+      "label": "Coordinator manages planning module communication",
+      "strength": 0.6
+    },
+    {
+      "id": "coordinator_manages_execution",
+      "type": "influences",
+      "source": "inter_module_coordinator",
+      "target": "execution_module",
+      "label": "Coordinator manages execution module communication",
+      "strength": 0.6
+    },
+    {
+      "id": "scheduler_optimizes_execution",
+      "type": "influences",
+      "source": "adaptive_scheduler",
+      "target": "task_executor",
+      "label": "Adaptive scheduler optimizes task execution order",
+      "strength": 0.75
+    },
+    {
+      "id": "progress_feeds_scheduler",
+      "type": "influences",
+      "source": "progress_tracker",
+      "target": "adaptive_scheduler",
+      "label": "Progress tracking influences scheduling decisions",
+      "strength": 0.6
+    },
+    {
+      "id": "resources_feed_scheduler",
+      "type": "influences",
+      "source": "resource_tracker",
+      "target": "adaptive_scheduler",
+      "label": "Resource availability influences scheduling",
+      "strength": 0.8
+    }
+  ],
+  "execution": {
+    "entry_points": ["global_context", "planning_module"],
+    "exit_points": ["progress_tracker"],
+    "max_iterations": 300,
+    "timeout": 20000,
+    "mode": "parallel"
+  },
+  "extensions": {
+    "modularity": {
+      "architecture": "hierarchical",
+      "module_isolation": "partial",
+      "shared_state_consistency": "eventual",
+      "cross_module_dependencies": true
+    },
+    "coordination": {
+      "strategy": "event_driven",
+      "load_balancing": true,
+      "fault_tolerance": "graceful_degradation"
+    },
+    "shared_resources": {
+      "global_nodes": ["global_context", "knowledge_base", "resource_tracker"],
+      "access_control": "role_based",
+      "conflict_resolution": "last_writer_wins"
+    },
+    "composition": {
+      "dependency_resolution": "lazy_loading",
+      "module_hot_reload": true,
+      "version_compatibility": "semver"
+    }
+  }
+}
