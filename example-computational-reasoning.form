@@ -1,0 +1,465 @@
+{
+  "metadata": {
+    "id": "risk_assessment_calculator",
+    "name": "Multi-Factor Risk Assessment with Computational Reasoning",
+    "description": "Complex mathematical model for risk assessment using multiple formulas and data transformations",
+    "version": "1.0.0",
+    "created_at": "2025-06-24T17:46:12Z",
+    "updated_at": "2025-06-24T17:46:12Z",
+    "author": "MiniMax Agent",
+    "tags": ["computation", "formulas", "risk-assessment", "mathematics"],
+    "dependencies": [],
+    "extensions": {
+      "computational_complexity": "high",
+      "formula_validation": "strict",
+      "numerical_precision": "double"
+    }
+  },
+  "nodes": [
+    {
+      "id": "market_data_input",
+      "type": "event",
+      "label": "Market Data Stream",
+      "description": "Real-time market data input for risk calculations",
+      "data": {
+        "value": {
+          "stock_prices": [100.5, 101.2, 99.8, 102.1],
+          "volumes": [1000000, 1200000, 950000, 1100000],
+          "timestamps": ["2025-06-24T09:00:00Z", "2025-06-24T10:00:00Z", "2025-06-24T11:00:00Z", "2025-06-24T12:00:00Z"],
+          "market_cap": 50000000000
+        },
+        "confidence": 0.98,
+        "weight": 1.0,
+        "parameters": {
+          "data_source": "bloomberg_api",
+          "refresh_rate": "1_minute",
+          "data_quality_threshold": 0.95
+        },
+        "state": "active"
+      },
+      "position": {"x": 100, "y": 100}
+    },
+    {
+      "id": "volatility_calculator",
+      "type": "formula",
+      "label": "Historical Volatility Calculator",
+      "description": "Calculates historical volatility using standard deviation of returns",
+      "data": {
+        "value": "sqrt(sum(pow(returns[i] - mean(returns), 2) for i in range(len(returns))) / (len(returns) - 1))",
+        "confidence": 0.95,
+        "weight": 0.9,
+        "parameters": {
+          "formula_type": "statistical",
+          "window_size": 30,
+          "annualization_factor": 252,
+          "variables": ["returns", "mean", "sqrt", "sum", "pow"]
+        },
+        "state": "active"
+      },
+      "position": {"x": 300, "y": 50},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["math.sqrt", "math.pow", "math.mean", "math.sum", "statistics.stdev"],
+          "timeout_ms": 2000,
+          "memory_limit_mb": 10
+        }
+      }
+    },
+    {
+      "id": "return_calculator",
+      "type": "formula",
+      "label": "Return Rate Calculator",
+      "description": "Calculates periodic returns from price data",
+      "data": {
+        "value": "(prices[i] - prices[i-1]) / prices[i-1] for i in range(1, len(prices))",
+        "confidence": 0.98,
+        "weight": 1.0,
+        "parameters": {
+          "formula_type": "transformation",
+          "return_type": "simple",
+          "variables": ["prices"]
+        },
+        "state": "active"
+      },
+      "position": {"x": 300, "y": 150},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["array.slice", "array.map"],
+          "input_validation": "numeric_array",
+          "output_validation": "numeric_array"
+        }
+      }
+    },
+    {
+      "id": "beta_calculator",
+      "type": "formula",
+      "label": "Beta Coefficient Calculator", 
+      "description": "Calculates beta relative to market benchmark",
+      "data": {
+        "value": "covariance(stock_returns, market_returns) / variance(market_returns)",
+        "confidence": 0.9,
+        "weight": 0.85,
+        "parameters": {
+          "formula_type": "regression",
+          "benchmark": "SP500",
+          "minimum_data_points": 24,
+          "variables": ["stock_returns", "market_returns", "covariance", "variance"]
+        },
+        "state": "active"
+      },
+      "position": {"x": 500, "y": 50},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["statistics.covariance", "statistics.variance"],
+          "data_requirements": ["minimum_24_points"]
+        }
+      }
+    },
+    {
+      "id": "sharpe_ratio_calculator",
+      "type": "formula",
+      "label": "Sharpe Ratio Calculator",
+      "description": "Calculates risk-adjusted return metric",
+      "data": {
+        "value": "(portfolio_return - risk_free_rate) / portfolio_volatility",
+        "confidence": 0.92,
+        "weight": 0.9,
+        "parameters": {
+          "formula_type": "ratio",
+          "risk_free_rate_source": "treasury_10y",
+          "variables": ["portfolio_return", "risk_free_rate", "portfolio_volatility"]
+        },
+        "state": "pending"
+      },
+      "position": {"x": 500, "y": 150},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["math.div"],
+          "validation": "non_zero_denominator"
+        }
+      }
+    },
+    {
+      "id": "var_calculator",
+      "type": "formula",
+      "label": "Value at Risk Calculator",
+      "description": "Calculates potential loss at specified confidence level",
+      "data": {
+        "value": "quantile(simulated_returns, 1 - confidence_level) * portfolio_value",
+        "confidence": 0.88,
+        "weight": 0.95,
+        "parameters": {
+          "formula_type": "quantile",
+          "confidence_level": 0.95,
+          "simulation_method": "monte_carlo",
+          "iterations": 10000,
+          "variables": ["simulated_returns", "confidence_level", "portfolio_value", "quantile"]
+        },
+        "state": "pending"
+      },
+      "position": {"x": 700, "y": 100},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["statistics.quantile", "random.normal"],
+          "computation_limit": "10000_iterations"
+        }
+      }
+    },
+    {
+      "id": "correlation_matrix",
+      "type": "formula",
+      "label": "Asset Correlation Matrix",
+      "description": "Calculates correlation matrix for portfolio assets",
+      "data": {
+        "value": "[[correlation(asset_i, asset_j) for j in assets] for i in assets]",
+        "confidence": 0.9,
+        "weight": 0.8,
+        "parameters": {
+          "formula_type": "matrix",
+          "correlation_method": "pearson",
+          "variables": ["assets", "correlation"]
+        },
+        "state": "active"
+      },
+      "position": {"x": 300, "y": 250},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["statistics.correlation", "matrix.create"],
+          "memory_optimization": "sparse_matrix"
+        }
+      }
+    },
+    {
+      "id": "portfolio_optimizer",
+      "type": "formula",
+      "label": "Portfolio Weight Optimizer",
+      "description": "Optimizes portfolio weights using modern portfolio theory",
+      "data": {
+        "value": "minimize(portfolio_variance) subject_to sum(weights) = 1 and weights >= 0",
+        "confidence": 0.85,
+        "weight": 1.0,
+        "parameters": {
+          "formula_type": "optimization",
+          "objective": "minimize_variance",
+          "constraints": ["sum_to_one", "non_negative"],
+          "solver": "quadratic_programming",
+          "variables": ["weights", "portfolio_variance"]
+        },
+        "state": "pending"
+      },
+      "position": {"x": 500, "y": 250},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["optimization.minimize", "constraint.sum_to_one"],
+          "solver_timeout": 30000
+        }
+      }
+    },
+    {
+      "id": "stress_test_simulator",
+      "type": "formula",
+      "label": "Stress Test Scenario Simulator",
+      "description": "Simulates portfolio performance under stress scenarios",
+      "data": {
+        "value": "simulate_portfolio(scenarios, weights, correlations, volatilities)",
+        "confidence": 0.8,
+        "weight": 0.9,
+        "parameters": {
+          "formula_type": "simulation",
+          "scenarios": ["2008_crisis", "covid_crash", "tech_bubble"],
+          "monte_carlo_runs": 5000,
+          "variables": ["scenarios", "weights", "correlations", "volatilities"]
+        },
+        "state": "pending"
+      },
+      "position": {"x": 700, "y": 250},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["simulation.monte_carlo", "random.scenario_generator"],
+          "computation_intensive": true
+        }
+      }
+    },
+    {
+      "id": "risk_aggregator",
+      "type": "formula",
+      "label": "Comprehensive Risk Score",
+      "description": "Aggregates multiple risk metrics into single score",
+      "data": {
+        "value": "weighted_sum([volatility_score * 0.3, var_score * 0.25, beta_score * 0.2, correlation_score * 0.15, stress_score * 0.1])",
+        "confidence": 0.87,
+        "weight": 1.0,
+        "parameters": {
+          "formula_type": "weighted_aggregation",
+          "normalization": "min_max_scaling",
+          "weights": {"volatility": 0.3, "var": 0.25, "beta": 0.2, "correlation": 0.15, "stress": 0.1},
+          "variables": ["volatility_score", "var_score", "beta_score", "correlation_score", "stress_score"]
+        },
+        "state": "pending"
+      },
+      "position": {"x": 900, "y": 150},
+      "extensions": {
+        "sandbox": {
+          "allowed_functions": ["math.weighted_sum", "normalization.min_max"],
+          "output_range": [0, 1]
+        }
+      }
+    },
+    {
+      "id": "recommendation_engine",
+      "type": "action",
+      "label": "Risk-Based Recommendation Engine",
+      "description": "Generates investment recommendations based on risk analysis",
+      "data": {
+        "value": null,
+        "confidence": 0.8,
+        "weight": 0.9,
+        "parameters": {
+          "recommendation_types": ["buy", "hold", "sell", "hedge"],
+          "risk_tolerance_levels": ["conservative", "moderate", "aggressive"],
+          "confidence_threshold": 0.7
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 900, "y": 300}
+    }
+  ],
+  "relations": [
+    {
+      "id": "market_data_feeds_return_calc",
+      "type": "triggers",
+      "source": "market_data_input",
+      "target": "return_calculator",
+      "label": "Market data triggers return calculation",
+      "strength": 1.0
+    },
+    {
+      "id": "returns_feed_volatility",
+      "type": "causes",
+      "source": "return_calculator",
+      "target": "volatility_calculator",
+      "label": "Return data enables volatility calculation",
+      "strength": 0.95
+    },
+    {
+      "id": "returns_feed_beta",
+      "type": "causes",
+      "source": "return_calculator",
+      "target": "beta_calculator",
+      "label": "Return data enables beta calculation",
+      "strength": 0.9
+    },
+    {
+      "id": "returns_feed_correlation",
+      "type": "causes",
+      "source": "return_calculator",
+      "target": "correlation_matrix",
+      "label": "Return data enables correlation analysis",
+      "strength": 0.9
+    },
+    {
+      "id": "volatility_feeds_sharpe",
+      "type": "influences",
+      "source": "volatility_calculator",
+      "target": "sharpe_ratio_calculator",
+      "label": "Volatility calculation influences Sharpe ratio",
+      "strength": 0.8
+    },
+    {
+      "id": "returns_feed_sharpe",
+      "type": "influences",
+      "source": "return_calculator",
+      "target": "sharpe_ratio_calculator",
+      "label": "Returns influence Sharpe ratio calculation",
+      "strength": 0.9
+    },
+    {
+      "id": "volatility_feeds_var",
+      "type": "influences",
+      "source": "volatility_calculator",
+      "target": "var_calculator",
+      "label": "Volatility influences VaR calculation",
+      "strength": 0.85
+    },
+    {
+      "id": "correlation_feeds_optimizer",
+      "type": "influences",
+      "source": "correlation_matrix",
+      "target": "portfolio_optimizer",
+      "label": "Correlation matrix influences portfolio optimization",
+      "strength": 0.9
+    },
+    {
+      "id": "volatility_feeds_optimizer",
+      "type": "influences",
+      "source": "volatility_calculator",
+      "target": "portfolio_optimizer",
+      "label": "Volatility influences portfolio optimization",
+      "strength": 0.8
+    },
+    {
+      "id": "optimizer_feeds_stress_test",
+      "type": "influences",
+      "source": "portfolio_optimizer",
+      "target": "stress_test_simulator",
+      "label": "Optimal weights influence stress testing",
+      "strength": 0.7
+    },
+    {
+      "id": "correlation_feeds_stress_test",
+      "type": "influences",
+      "source": "correlation_matrix",
+      "target": "stress_test_simulator",
+      "label": "Correlations influence stress test scenarios",
+      "strength": 0.8
+    },
+    {
+      "id": "volatility_feeds_aggregator",
+      "type": "influences",
+      "source": "volatility_calculator",
+      "target": "risk_aggregator",
+      "label": "Volatility score feeds risk aggregation",
+      "strength": 0.3
+    },
+    {
+      "id": "var_feeds_aggregator",
+      "type": "influences",
+      "source": "var_calculator",
+      "target": "risk_aggregator",
+      "label": "VaR score feeds risk aggregation",
+      "strength": 0.25
+    },
+    {
+      "id": "beta_feeds_aggregator",
+      "type": "influences",
+      "source": "beta_calculator",
+      "target": "risk_aggregator",
+      "label": "Beta score feeds risk aggregation",
+      "strength": 0.2
+    },
+    {
+      "id": "correlation_feeds_aggregator",
+      "type": "influences",
+      "source": "correlation_matrix",
+      "target": "risk_aggregator",
+      "label": "Correlation score feeds risk aggregation",
+      "strength": 0.15
+    },
+    {
+      "id": "stress_test_feeds_aggregator",
+      "type": "influences",
+      "source": "stress_test_simulator",
+      "target": "risk_aggregator",
+      "label": "Stress test results feed risk aggregation",
+      "strength": 0.1
+    },
+    {
+      "id": "risk_score_triggers_recommendations",
+      "type": "triggers",
+      "source": "risk_aggregator",
+      "target": "recommendation_engine",
+      "label": "Risk score triggers recommendation generation",
+      "strength": 0.9,
+      "conditions": [
+        {
+          "field": "data.confidence",
+          "operator": "gte",
+          "value": 0.7
+        }
+      ]
+    }
+  ],
+  "execution": {
+    "entry_points": ["market_data_input"],
+    "exit_points": ["recommendation_engine", "risk_aggregator"],
+    "max_iterations": 100,
+    "timeout": 30000,
+    "mode": "adaptive"
+  },
+  "extensions": {
+    "computational": {
+      "precision": "double",
+      "numerical_stability": "ieee_754",
+      "parallel_computation": true,
+      "optimization_level": "O3"
+    },
+    "formula_security": {
+      "sandbox_mode": "strict",
+      "function_whitelist": "financial_math_only",
+      "memory_limits": {"per_formula": "10MB", "total": "100MB"},
+      "computation_timeout": 30000
+    },
+    "data_validation": {
+      "input_sanitization": true,
+      "numerical_bounds_checking": true,
+      "overflow_protection": true,
+      "nan_handling": "raise_error"
+    },
+    "performance": {
+      "caching_enabled": true,
+      "memoization": "formula_results",
+      "parallel_execution": "formula_level",
+      "optimization_hints": ["vectorization", "loop_unrolling"]
+    }
+  }
+}

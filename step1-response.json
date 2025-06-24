@@ -1,0 +1,33 @@
+{
+  "step": "Core .form JSON Schema Design & Specification",
+  "description": "I've designed a comprehensive JSON schema for .form files that supports rich cognitive modeling with extensibility, AI integration, and production-ready features. The schema includes typed nodes (concept, condition, action, event, formula, custom), semantic relations (causes, triggers, blocks, contains, depends_on, influences), comprehensive metadata with version control, execution configuration, and multi-level extensibility. The design prioritizes human readability, machine interpretability, and seamless AI agent integration.",
+  "code": [
+    {
+      "language": "json",
+      "filename": "form-schema.json",
+      "content": "Complete JSON Schema Draft 07 specification defining the structure, validation rules, and extensibility framework for .form files. Includes node types, relation types, metadata requirements, execution configuration, and extension mechanisms."
+    },
+    {
+      "language": "json", 
+      "filename": "example-decision-workflow.form",
+      "content": "Comprehensive example demonstrating a weather-based activity decision workflow with 6 nodes of different types (event, condition, action, concept, formula) connected by 7 semantic relations. Shows practical usage of confidence scores, weights, parameters, and execution configuration."
+    },
+    {
+      "language": "json",
+      "filename": "example-multi-agent-collaboration.form", 
+      "content": "Advanced example showcasing multi-agent coordination with problem decomposition, agent assignment, progress monitoring, and solution synthesis. Demonstrates parallel execution, agent communication patterns, and complex dependency management."
+    },
+    {
+      "language": "markdown",
+      "filename": "form-design-specification.md",
+      "content": "Detailed design document explaining architectural decisions, semantic models, extensibility strategies, AI integration considerations, version control approach, security guidelines, and future evolution plans."
+    }
+  ],
+  "next_steps": "STEP 2: Create additional example .form files demonstrating various cognitive patterns (learning loops, constraint satisfaction, temporal reasoning, hierarchical composition) to validate schema completeness before proceeding to parser implementation. STEP 3: Build the .form parser and validator with comprehensive error handling and reference resolution. STEP 4: Implement the execution engine with state management and reasoning capabilities.",
+  "questions": [
+    "Should the schema support temporal constraints (time-based triggers, delays, scheduling) as a core feature or as extensions?",
+    "Do you want built-in support for probabilistic reasoning nodes with uncertainty propagation, or should this be handled through custom node types?",
+    "Should the execution engine support real-time streaming updates to .form files during execution, or operate on static snapshots?",
+    "What level of sandboxing do you want for formula evaluation - full isolation, restricted function access, or custom security policies?"
+  ]
+}

@@ -1,5 +1,6 @@
 import { FormValidator } from './validation/FormValidator';
 import { FormCompiler } from './compiler/FormCompiler';
+import { FormExecutor } from './execution/FormExecutor';
 import { 
   FormFile, 
   FormGraph, 
@@ -16,12 +17,16 @@ import * as fs from 'fs';
 export class FormPlatform {
   private validator: FormValidator;
   private compiler: FormCompiler;
+  private executor: FormExecutor;
   private loadedGraphs: Map<string, FormGraph>;
+  private executionResults: Map<string, ExecutionResult>;
 
   constructor() {
     this.validator = new FormValidator();
     this.compiler = new FormCompiler();
+    this.executor = new FormExecutor();
     this.loadedGraphs = new Map();
+    this.executionResults = new Map();
   }
 
   /**
@@ -357,5 +362,286 @@ export class FormPlatform {
     }
 
     return report;
+  }
+
+  /**
+   * Execute a compiled form graph with given inputs
+   */
+  async executeForm(
+    formId: string, 
+    inputs: Record<string, any> = {},
+    config?: Partial<ExecutionConfig>
+  ): Promise<ExecutionResult> {
+    const graph = this.loadedGraphs.get(formId);
+    if (!graph) {
+      throw new Error(`Form ${formId} not found. Load it first using loadFile().`);
+    }
+
+    try {
+      const result = await this.executor.execute(graph, inputs, config);
+      
+      // Cache the execution result
+      this.executionResults.set(`${formId}_${Date.now()}`, result);
+      
+      return result;
+    } catch (error) {
+      throw new Error(`Execution failed for form ${formId}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Execute a .form file directly from filesystem
+   */
+  async executeFile(
+    filePath: string, 
+    inputs: Record<string, any> = {},
+    config?: Partial<ExecutionConfig>
+  ): Promise<ExecutionResult> {
+    // Load and compile the form
+    const loadResult = await this.loadFile(filePath);
+    
+    if (!loadResult.valid || !loadResult.graph) {
+      throw new Error(`Cannot execute invalid form: ${filePath}`);
+    }
+
+    return this.executeForm(loadResult.form!.metadata.id, inputs, config);
+  }
+
+  /**
+   * Simulate execution without side effects (dry run)
+   */
+  async simulateExecution(
+    formId: string, 
+    inputs: Record<string, any> = {},
+    config?: Partial<ExecutionConfig>
+  ): Promise<ExecutionResult> {
+    const graph = this.loadedGraphs.get(formId);
+    if (!graph) {
+      throw new Error(`Form ${formId} not found. Load it first using loadFile().`);
+    }
+
+    // Create a deep copy of the graph for simulation
+    const simulationGraph = JSON.parse(JSON.stringify(graph, (key, value) => {
+      if (value instanceof Map) {
+        return Object.fromEntries(value);
+      }
+      return value;
+    }));
+
+    // Convert back to Maps
+    simulationGraph.nodes = new Map(Object.entries(simulationGraph.nodes));
+    simulationGraph.relations = new Map(Object.entries(simulationGraph.relations));
+    simulationGraph.adjacencyList = new Map(Object.entries(simulationGraph.adjacencyList));
+    simulationGraph.reverseAdjacencyList = new Map(Object.entries(simulationGraph.reverseAdjacencyList));
+
+    return this.executor.execute(simulationGraph, inputs, config);
+  }
+
+  /**
+   * Get execution history for a form
+   */
+  getExecutionHistory(formId: string): ExecutionResult[] {
+    const results: ExecutionResult[] = [];
+    
+    this.executionResults.forEach((result, key) => {
+      if (key.startsWith(formId + '_')) {
+        results.push(result);
+      }
+    });
+    
+    return results.sort((a, b) => 
+      (a.executionTrace[0]?.timestamp || 0) - (b.executionTrace[0]?.timestamp || 0)
+    );
+  }
+
+  /**
+   * Clear execution history for a form
+   */
+  clearExecutionHistory(formId?: string): void {
+    if (formId) {
+      // Clear specific form's history
+      Array.from(this.executionResults.keys())
+        .filter(key => key.startsWith(formId + '_'))
+        .forEach(key => this.executionResults.delete(key));
+    } else {
+      // Clear all execution history
+      this.executionResults.clear();
+    }
+  }
+
+  /**
+   * Batch execution of multiple forms
+   */
+  async batchExecute(executions: Array<{
+    formId: string;
+    inputs?: Record<string, any>;
+    config?: Partial<ExecutionConfig>;
+  }>): Promise<Array<{
+    formId: string;
+    success: boolean;
+    result?: ExecutionResult;
+    error?: string;
+  }>> {
+    const results = [];
+    
+    for (const execution of executions) {
+      try {
+        const result = await this.executeForm(
+          execution.formId, 
+          execution.inputs || {}, 
+          execution.config
+        );
+        results.push({
+          formId: execution.formId,
+          success: true,
+          result
+        });
+      } catch (error) {
+        results.push({
+          formId: execution.formId,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+    
+    return results;
+  }
+
+  /**
+   * Export execution results to various formats
+   */
+  exportExecutionResults(
+    results: ExecutionResult[], 
+    format: 'json' | 'csv' | 'summary' = 'json'
+  ): string {
+    switch (format) {
+      case 'json':
+        return JSON.stringify(results, null, 2);
+      
+      case 'csv':
+        return this.exportToCsv(results);
+      
+      case 'summary':
+        return this.generateExecutionSummary(results);
+      
+      default:
+        throw new Error(`Unsupported export format: ${format}`);
+    }
+  }
+
+  /**
+   * Clear cached graphs and execution results
+   */
+  clearCache(): void {
+    this.loadedGraphs.clear();
+    this.executionResults.clear();
+  }
+
+  /**
+   * Get platform statistics
+   */
+  getStatistics(): {
+    loadedForms: number;
+    totalExecutions: number;
+    successfulExecutions: number;
+    failedExecutions: number;
+    averageExecutionTime: number;
+  } {
+    const totalExecutions = this.executionResults.size;
+    const successfulExecutions = Array.from(this.executionResults.values())
+      .filter(result => result.success).length;
+    const failedExecutions = totalExecutions - successfulExecutions;
+    
+    const executionTimes = Array.from(this.executionResults.values())
+      .map(result => result.metrics.totalDuration);
+    const averageExecutionTime = executionTimes.length > 0 
+      ? executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length 
+      : 0;
+
+    return {
+      loadedForms: this.loadedGraphs.size,
+      totalExecutions,
+      successfulExecutions,
+      failedExecutions,
+      averageExecutionTime
+    };
+  }
+
+  /**
+   * Helper method to export results to CSV format
+   */
+  private exportToCsv(results: ExecutionResult[]): string {
+    const headers = [
+      'Success',
+      'Total Duration (ms)',
+      'Nodes Executed',
+      'Iterations Completed',
+      'Memory Used (bytes)',
+      'Formulas Evaluated',
+      'Error Count'
+    ];
+
+    const rows = results.map(result => [
+      result.success.toString(),
+      result.metrics.totalDuration.toString(),
+      result.metrics.nodesExecuted.toString(),
+      result.metrics.iterationsCompleted.toString(),
+      result.metrics.memoryUsed.toString(),
+      result.metrics.formulasEvaluated.toString(),
+      (result.errors?.length || 0).toString()
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map(row => row.join(','))
+      .join('\n');
+
+    return csvContent;
+  }
+
+  /**
+   * Helper method to generate execution summary
+   */
+  private generateExecutionSummary(results: ExecutionResult[]): string {
+    const totalExecutions = results.length;
+    const successfulExecutions = results.filter(r => r.success).length;
+    const failedExecutions = totalExecutions - successfulExecutions;
+    
+    const totalDuration = results.reduce((sum, r) => sum + r.metrics.totalDuration, 0);
+    const averageDuration = totalExecutions > 0 ? totalDuration / totalExecutions : 0;
+    
+    const totalNodesExecuted = results.reduce((sum, r) => sum + r.metrics.nodesExecuted, 0);
+    const totalMemoryUsed = results.reduce((sum, r) => sum + r.metrics.memoryUsed, 0);
+
+    let summary = `# Execution Summary\n\n`;
+    summary += `**Total Executions:** ${totalExecutions}\n`;
+    summary += `**Successful:** ${successfulExecutions} (${((successfulExecutions/totalExecutions)*100).toFixed(1)}%)\n`;
+    summary += `**Failed:** ${failedExecutions} (${((failedExecutions/totalExecutions)*100).toFixed(1)}%)\n\n`;
+    
+    summary += `## Performance Metrics\n`;
+    summary += `**Total Duration:** ${totalDuration.toLocaleString()} ms\n`;
+    summary += `**Average Duration:** ${averageDuration.toFixed(2)} ms\n`;
+    summary += `**Total Nodes Executed:** ${totalNodesExecuted.toLocaleString()}\n`;
+    summary += `**Total Memory Used:** ${(totalMemoryUsed / (1024 * 1024)).toFixed(2)} MB\n\n`;
+
+    if (failedExecutions > 0) {
+      summary += `## Common Errors\n`;
+      const errorCounts = new Map<string, number>();
+      
+      results.forEach(result => {
+        result.errors?.forEach(error => {
+          const count = errorCounts.get(error.type) || 0;
+          errorCounts.set(error.type, count + 1);
+        });
+      });
+
+      Array.from(errorCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([errorType, count]) => {
+          summary += `- **${errorType}:** ${count} occurrences\n`;
+        });
+    }
+
+    return summary;
   }
 }

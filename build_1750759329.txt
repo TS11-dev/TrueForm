@@ -1,0 +1,125 @@
+
+> form-cognitive-platform@1.0.0 build
+> tsc
+
+src/FormPlatform.ts:62:46 - error TS18046: 'error' is of type 'unknown'.
+
+62             message: `Failed to load file: ${error.message}`,
+                                                ~~~~~
+
+src/cli.ts:82:62 - error TS18046: 'error' is of type 'unknown'.
+
+82         console.log(chalk.red(`❌ Error processing ${file}: ${error.message}`));
+                                                                ~~~~~
+
+src/cli.ts:166:54 - error TS18046: 'error' is of type 'unknown'.
+
+166       console.log(chalk.red(`❌ Compilation failed: ${error.message}`));
+                                                         ~~~~~
+
+src/cli.ts:274:56 - error TS18046: 'error' is of type 'unknown'.
+
+274       console.log(chalk.red(`❌ Error analyzing file: ${error.message}`));
+                                                           ~~~~~
+
+src/cli.ts:326:58 - error TS18046: 'error' is of type 'unknown'.
+
+326       console.log(chalk.red(`❌ Error testing examples: ${error.message}`));
+                                                             ~~~~~
+
+src/test/testRunner.ts:38:53 - error TS18046: 'error' is of type 'unknown'.
+
+38       testResults.errors.push(`Schema validation: ${error.message}`);
+                                                       ~~~~~
+
+src/test/testRunner.ts:39:60 - error TS18046: 'error' is of type 'unknown'.
+
+39       console.log(chalk.red(`❌ Schema validation failed: ${error.message}\n`));
+                                                              ~~~~~
+
+src/test/testRunner.ts:50:52 - error TS18046: 'error' is of type 'unknown'.
+
+50       testResults.errors.push(`Form compilation: ${error.message}`);
+                                                      ~~~~~
+
+src/test/testRunner.ts:51:59 - error TS18046: 'error' is of type 'unknown'.
+
+51       console.log(chalk.red(`❌ Form compilation failed: ${error.message}\n`));
+                                                             ~~~~~
+
+src/test/testRunner.ts:62:50 - error TS18046: 'error' is of type 'unknown'.
+
+62       testResults.errors.push(`Graph analysis: ${error.message}`);
+                                                    ~~~~~
+
+src/test/testRunner.ts:63:57 - error TS18046: 'error' is of type 'unknown'.
+
+63       console.log(chalk.red(`❌ Graph analysis failed: ${error.message}\n`));
+                                                           ~~~~~
+
+src/test/testRunner.ts:74:50 - error TS18046: 'error' is of type 'unknown'.
+
+74       testResults.errors.push(`Error handling: ${error.message}`);
+                                                    ~~~~~
+
+src/test/testRunner.ts:75:57 - error TS18046: 'error' is of type 'unknown'.
+
+75       console.log(chalk.red(`❌ Error handling failed: ${error.message}\n`));
+                                                           ~~~~~
+
+src/test/testRunner.ts:86:53 - error TS18046: 'error' is of type 'unknown'.
+
+86       testResults.errors.push(`Template creation: ${error.message}`);
+                                                       ~~~~~
+
+src/test/testRunner.ts:87:60 - error TS18046: 'error' is of type 'unknown'.
+
+87       console.log(chalk.red(`❌ Template creation failed: ${error.message}\n`));
+                                                              ~~~~~
+
+src/test/testRunner.ts:132:48 - error TS18046: 'error' is of type 'unknown'.
+
+132         errors.push(`${path.basename(file)}: ${error.message}`);
+                                                   ~~~~~
+
+src/test/testRunner.ts:228:11 - error TS18046: 'error' is of type 'unknown'.
+
+228       if (error.message.includes('Expected JSON parsing to fail')) {
+              ~~~~~
+
+src/validation/FormValidator.ts:27:19 - error TS2352: Conversion of type '{ readonly $schema: "http://json-schema.org/draft-07/schema#"; readonly title: ".form Cognitive Model Schema"; readonly description: "Schema for .form files - structured cognitive models for AI reasoning"; readonly type: "object"; readonly required: readonly [...]; readonly properties: { ...; }; readonly additionalP...' to type 'JSONSchemaType<FormFile>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ readonly $schema: "http://json-schema.org/draft-07/schema#"; readonly title: ".form Cognitive Model Schema"; readonly description: "Schema for .form files - structured cognitive models for AI reasoning"; readonly type: "object"; readonly required: readonly [...]; readonly properties: { ...; }; readonly additionalP...' is not comparable to type '({ anyOf: readonly UncheckedJSONSchemaType<FormFile, false>[]; } & { [keyword: string]: any; $id?: string | undefined; $ref?: string | undefined; $defs?: Record<...> | undefined; definitions?: Record<...> | undefined; }) | ({ ...; } & { ...; }) | ({ ...; } & ... 2 more ... & { ...; })'.
+    Type '{ readonly $schema: "http://json-schema.org/draft-07/schema#"; readonly title: ".form Cognitive Model Schema"; readonly description: "Schema for .form files - structured cognitive models for AI reasoning"; readonly type: "object"; readonly required: readonly [...]; readonly properties: { ...; }; readonly additionalP...' is not comparable to type '{ type: "object"; additionalProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; unevaluatedProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; ... 7 more ...; maxProperties?: number | undefined; } & { ...; } & { ...; } & { ...; }'.
+      Type '{ readonly $schema: "http://json-schema.org/draft-07/schema#"; readonly title: ".form Cognitive Model Schema"; readonly description: "Schema for .form files - structured cognitive models for AI reasoning"; readonly type: "object"; readonly required: readonly [...]; readonly properties: { ...; }; readonly additionalP...' is not comparable to type '{ type: "object"; additionalProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; unevaluatedProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; ... 7 more ...; maxProperties?: number | undefined; }'.
+        The types of 'properties.metadata' are incompatible between these types.
+          Type '{ readonly type: "object"; readonly required: readonly ["id", "name", "version", "created_at", "updated_at"]; readonly properties: { readonly id: { readonly type: "string"; readonly pattern: "^[a-zA-Z0-9_-]+$"; readonly description: "Unique identifier for this .form file"; }; ... 8 more ...; readonly extensions: { ....' is not comparable to type '{ $ref: string; } | (UncheckedJSONSchemaType<FormMetadata, false> & { nullable?: false | undefined; const?: FormMetadata | undefined; enum?: readonly FormMetadata[] | undefined; default?: FormMetadata | undefined; })'.
+            Type '{ readonly type: "object"; readonly required: readonly ["id", "name", "version", "created_at", "updated_at"]; readonly properties: { readonly id: { readonly type: "string"; readonly pattern: "^[a-zA-Z0-9_-]+$"; readonly description: "Unique identifier for this .form file"; }; ... 8 more ...; readonly extensions: { ....' is not comparable to type '({ anyOf: readonly UncheckedJSONSchemaType<FormMetadata, false>[]; } & { [keyword: string]: any; $id?: string | undefined; $ref?: string | undefined; $defs?: Record<...> | undefined; definitions?: Record<...> | undefined; } & { ...; }) | ({ ...; } & ... 1 more ... & { ...; }) | ({ ...; } & ... 3 more ... & { ...; })'.
+              Type '{ readonly type: "object"; readonly required: readonly ["id", "name", "version", "created_at", "updated_at"]; readonly properties: { readonly id: { readonly type: "string"; readonly pattern: "^[a-zA-Z0-9_-]+$"; readonly description: "Unique identifier for this .form file"; }; ... 8 more ...; readonly extensions: { ....' is not comparable to type '{ type: "object"; additionalProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; unevaluatedProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; ... 7 more ...; maxProperties?: number | undefined; } & { ...; } & { ...; } & { ...; } & { ...; }'.
+                Type '{ readonly type: "object"; readonly required: readonly ["id", "name", "version", "created_at", "updated_at"]; readonly properties: { readonly id: { readonly type: "string"; readonly pattern: "^[a-zA-Z0-9_-]+$"; readonly description: "Unique identifier for this .form file"; }; ... 8 more ...; readonly extensions: { ....' is not comparable to type '{ type: "object"; additionalProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; unevaluatedProperties?: boolean | UncheckedJSONSchemaType<unknown, false> | undefined; ... 7 more ...; maxProperties?: number | undefined; }'.
+                  The types of 'properties.description' are incompatible between these types.
+                    Type '{ readonly type: "string"; readonly description: "Optional description of the model's purpose"; }' is not comparable to type '{ $ref: string; } | (UncheckedJSONSchemaType<string | undefined, false> & { nullable: true; const?: null | undefined; enum?: readonly (string | null | undefined)[] | undefined; default?: string | ... 1 more ... | undefined; })'.
+                      Type '{ readonly type: "string"; readonly description: "Optional description of the model's purpose"; }' is not comparable to type '({ anyOf: readonly UncheckedJSONSchemaType<string | undefined, false>[]; } & { [keyword: string]: any; $id?: string | undefined; $ref?: string | undefined; $defs?: Record<...> | undefined; definitions?: Record<...> | undefined; } & { ...; }) | ({ ...; } & ... 1 more ... & { ...; }) | ({ ...; } & ... 3 more ... & { ....'.
+                        Type '{ readonly type: "string"; readonly description: "Optional description of the model's purpose"; }' is not comparable to type '{ type: "string"; } & StringKeywords & { allOf?: readonly UncheckedPartialSchema<string | undefined>[] | undefined; anyOf?: readonly UncheckedPartialSchema<string | undefined>[] | undefined; ... 4 more ...; not?: UncheckedPartialSchema<...> | undefined; } & { ...; } & { ...; }'.
+                          Property 'nullable' is missing in type '{ readonly type: "string"; readonly description: "Optional description of the model's purpose"; }' but required in type '{ nullable: true; const?: null | undefined; enum?: readonly (string | null | undefined)[] | undefined; default?: string | null | undefined; }'.
+
+27     this.schema = FormSchema as JSONSchemaType<FormFile>;
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  node_modules/ajv/dist/types/json-schema.d.ts:115:5
+    115     nullable: true;
+            ~~~~~~~~
+    'nullable' is declared here.
+
+src/validation/FormValidator.ts:44:45 - error TS18046: 'error' is of type 'unknown'.
+
+44           message: `Failed to parse file: ${error.message}`,
+                                               ~~~~~
+
+
+Found 19 errors in 4 files.
+
+Errors  Files
+     1  src/FormPlatform.ts:62
+     4  src/cli.ts:82
+    12  src/test/testRunner.ts:38
+     2  src/validation/FormValidator.ts:27

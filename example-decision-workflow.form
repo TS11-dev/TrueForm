@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "id": "weather_decision_workflow",
+    "name": "Weather-Based Activity Decision",
+    "description": "A cognitive model for deciding outdoor activities based on weather conditions",
+    "version": "1.0.0",
+    "created_at": "2025-06-24T17:46:12Z",
+    "updated_at": "2025-06-24T17:46:12Z",
+    "author": "MiniMax Agent",
+    "tags": ["decision-making", "weather", "activities"],
+    "dependencies": [],
+    "extensions": {
+      "domain": "lifestyle",
+      "complexity": "simple"
+    }
+  },
+  "nodes": [
+    {
+      "id": "weather_input",
+      "type": "event",
+      "label": "Weather Data Input",
+      "description": "Receives current weather information",
+      "data": {
+        "value": null,
+        "confidence": 1.0,
+        "weight": 1.0,
+        "parameters": {
+          "required_fields": ["temperature", "precipitation", "wind_speed"],
+          "data_source": "weather_api"
+        },
+        "state": "active"
+      },
+      "position": {"x": 100, "y": 100}
+    },
+    {
+      "id": "good_weather_condition",
+      "type": "condition",
+      "label": "Good Weather Check",
+      "description": "Evaluates if weather conditions are favorable for outdoor activities",
+      "data": {
+        "value": false,
+        "confidence": 0.8,
+        "weight": 0.9,
+        "parameters": {
+          "temperature_min": 15,
+          "temperature_max": 30,
+          "precipitation_max": 0.1,
+          "wind_speed_max": 25
+        },
+        "state": "pending"
+      },
+      "position": {"x": 300, "y": 100}
+    },
+    {
+      "id": "outdoor_activity",
+      "type": "action",
+      "label": "Plan Outdoor Activity",
+      "description": "Recommends suitable outdoor activities",
+      "data": {
+        "value": ["hiking", "cycling", "picnic"],
+        "confidence": 0.85,
+        "weight": 1.0,
+        "parameters": {
+          "activity_types": ["sports", "leisure", "adventure"],
+          "duration_options": ["1h", "2h", "4h", "full_day"]
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 500, "y": 50}
+    },
+    {
+      "id": "indoor_activity",
+      "type": "action",
+      "label": "Plan Indoor Activity",
+      "description": "Recommends suitable indoor activities",
+      "data": {
+        "value": ["reading", "movies", "cooking", "gaming"],
+        "confidence": 0.9,
+        "weight": 1.0,
+        "parameters": {
+          "activity_types": ["entertainment", "productive", "social"],
+          "energy_level": ["low", "medium", "high"]
+        },
+        "state": "inactive"
+      },
+      "position": {"x": 500, "y": 150}
+    },
+    {
+      "id": "user_preference",
+      "type": "concept",
+      "label": "User Activity Preference",
+      "description": "Stores user's preferred activity types and constraints",
+      "data": {
+        "value": {
+          "preferred_activities": ["outdoor", "active"],
+          "available_time": "2h",
+          "energy_level": "medium"
+        },
+        "confidence": 0.7,
+        "weight": 0.8,
+        "parameters": {
+          "learning_enabled": true,
+          "update_frequency": "weekly"
+        },
+        "state": "active"
+      },
+      "position": {"x": 300, "y": 250}
+    },
+    {
+      "id": "activity_ranking",
+      "type": "formula",
+      "label": "Activity Score Calculator",
+      "description": "Calculates weighted scores for activity recommendations",
+      "data": {
+        "value": "weather_score * 0.4 + preference_match * 0.6",
+        "confidence": 0.95,
+        "weight": 1.0,
+        "parameters": {
+          "formula_type": "weighted_sum",
+          "variables": ["weather_score", "preference_match", "time_availability"],
+          "output_range": [0, 1]
+        },
+        "state": "active"
+      },
+      "position": {"x": 700, "y": 100}
+    }
+  ],
+  "relations": [
+    {
+      "id": "weather_triggers_evaluation",
+      "type": "triggers",
+      "source": "weather_input",
+      "target": "good_weather_condition",
+      "label": "Weather data triggers condition evaluation",
+      "strength": 1.0,
+      "bidirectional": false,
+      "conditions": [
+        {
+          "field": "state",
+          "operator": "eq",
+          "value": "completed"
+        }
+      ]
+    },
+    {
+      "id": "good_weather_enables_outdoor",
+      "type": "causes",
+      "source": "good_weather_condition",
+      "target": "outdoor_activity",
+      "label": "Good weather enables outdoor activities",
+      "strength": 0.9,
+      "bidirectional": false,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "bad_weather_causes_indoor",
+      "type": "causes",
+      "source": "good_weather_condition",
+      "target": "indoor_activity",
+      "label": "Bad weather causes indoor activity selection",
+      "strength": 0.8,
+      "bidirectional": false,
+      "conditions": [
+        {
+          "field": "data.value",
+          "operator": "eq",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": "preference_influences_outdoor",
+      "type": "influences",
+      "source": "user_preference",
+      "target": "outdoor_activity",
+      "label": "User preferences influence outdoor activity selection",
+      "strength": 0.7,
+      "bidirectional": false
+    },
+    {
+      "id": "preference_influences_indoor",
+      "type": "influences",
+      "source": "user_preference",
+      "target": "indoor_activity",
+      "label": "User preferences influence indoor activity selection",
+      "strength": 0.7,
+      "bidirectional": false
+    },
+    {
+      "id": "activities_feed_ranking",
+      "type": "depends_on",
+      "source": "activity_ranking",
+      "target": "outdoor_activity",
+      "label": "Ranking depends on outdoor activity options",
+      "strength": 0.5,
+      "bidirectional": false
+    },
+    {
+      "id": "activities_feed_ranking_indoor",
+      "type": "depends_on",
+      "source": "activity_ranking",
+      "target": "indoor_activity",
+      "label": "Ranking depends on indoor activity options",
+      "strength": 0.5,
+      "bidirectional": false
+    }
+  ],
+  "execution": {
+    "entry_points": ["weather_input"],
+    "exit_points": ["outdoor_activity", "indoor_activity", "activity_ranking"],
+    "max_iterations": 100,
+    "timeout": 5000,
+    "mode": "adaptive"
+  },
+  "extensions": {
+    "visualization": {
+      "theme": "default",
+      "layout": "hierarchical"
+    },
+    "learning": {
+      "enabled": true,
+      "feedback_nodes": ["user_preference"],
+      "adaptation_rate": 0.1
+    }
+  }
+}
